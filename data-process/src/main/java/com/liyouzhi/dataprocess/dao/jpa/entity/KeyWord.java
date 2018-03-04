@@ -3,12 +3,12 @@ package com.liyouzhi.dataprocess.dao.jpa.entity;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "keys")
-public class Key {
-    public Key(){}
+@Table(name = "key_words")
+public class KeyWord {
+    public KeyWord(){}
 
     private long id;
-    private String key;
+    private String keyWord;
     private int count = 1;
 
     @Id
@@ -21,13 +21,13 @@ public class Key {
         this.id = id;
     }
 
-    @Column(name = "key", unique = true, nullable = false)
-    public String getKey() {
-        return key;
+    @Column(name = "key_word", unique = true, nullable = false)
+    public String getKeyWord() {
+        return keyWord;
     }
 
-    public void setKey(String key) {
-        this.key = key;
+    public void setKeyWord(String keyWord) {
+        this.keyWord = keyWord;
     }
 
     @Column(name = "count", nullable = false)

@@ -1,23 +1,23 @@
 package com.liyouzhi.dataprocess.dao.impl;
 
 import com.liyouzhi.dataprocess.dao.DataDao;
-import com.liyouzhi.dataprocess.dao.jpa.entity.Key;
+import com.liyouzhi.dataprocess.dao.jpa.entity.KeyWord;
 
 import java.util.List;
 
-public class keyDataDaoImpl implements DataDao<Key>{
+public class keyDataDaoImpl implements DataDao<KeyWord>{
     @Override
-    public void save(Key key) {
+    public void save(KeyWord key) {
 
     }
 
     @Override
-    public Key findByKeyIs(String key) {
+    public KeyWord findByKeyIs(String key) {
         return null;
     }
 
     @Override
-    public List<Key> findAll() {
+    public List<KeyWord> findAll() {
         return null;
     }
 }
