@@ -20,6 +20,7 @@ public class KeyWriteToCSV implements DataWrite<String, List<KeyWord>> {
         FileWriter fileWriter = null;
         try{
             fileWriter = new FileWriter(csvName);
+
             CSVWriter csvWriter = new CSVWriter(fileWriter, ',');
             for(KeyWord key : keyList){
                 String[] row = {Long.toString(key.getId()), key.getKeyWord(), Integer.toString(key.getCount())};
