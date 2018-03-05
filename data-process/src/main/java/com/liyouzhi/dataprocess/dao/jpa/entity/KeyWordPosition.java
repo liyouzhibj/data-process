@@ -3,7 +3,7 @@ package com.liyouzhi.dataprocess.dao.jpa.entity;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "details")
+@Table(name = "key_word_positions")
 public class KeyWordPosition {
     public KeyWordPosition(){}
 

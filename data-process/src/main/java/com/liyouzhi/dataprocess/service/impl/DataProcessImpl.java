@@ -103,6 +103,9 @@ public class DataProcessImpl implements DataProcess<String, KeyPosition, String,
 
     @Override
     public List<KeyPosition> getKey(String sourceData, String regex) {
+        if(null == sourceData){
+            sourceData = "";
+        }
         Pattern p = Pattern.compile(regex);
         Matcher m = p.matcher(sourceData);
         List<KeyPosition> list = new ArrayList<>();

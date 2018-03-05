@@ -9,6 +9,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -89,15 +90,20 @@ public class DataReadFromFile implements DataRead<File, Integer, String, String>
 
     @Override
     public List<File> fileFilter(List<File> fileList, String fileType) {
+        if(fileType.equals("")){
+            return fileList;
+        }
+
+        List<File> result = new LinkedList<>();
         for(File file : fileList){
             String fileName = file.getName();
             String type = fileName.substring(fileName.lastIndexOf(".") + 1);
             System.out.println(type);
             if(fileType.equals(type)){
-                fileList.remove(file);
+                result.add(file);
             }
         }
 
-        return fileList;
+        return result;
     }
 }

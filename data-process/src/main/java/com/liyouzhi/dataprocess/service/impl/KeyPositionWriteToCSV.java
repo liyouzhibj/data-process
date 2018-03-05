@@ -1,6 +1,8 @@
 package com.liyouzhi.dataprocess.service.impl;
 
+import com.liyouzhi.dataprocess.bo.KeyPosition;
 import com.liyouzhi.dataprocess.dao.jpa.entity.KeyWord;
+import com.liyouzhi.dataprocess.dao.jpa.entity.KeyWordPosition;
 import com.liyouzhi.dataprocess.service.DataWrite;
 import com.opencsv.CSVWriter;
 import org.slf4j.Logger;
@@ -11,22 +13,26 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 
-@Service("keyWriteToCSV")
-public class KeyWriteToCSV implements DataWrite<String, List<KeyWord>> {
+@Service("keyPositionWriteToCSV")
+public class KeyPositionWriteToCSV implements DataWrite<String, List<KeyWordPosition>> {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Override
-    public void write(String csvName, List<KeyWord> keyList) {
+    public void write(String csvName, List<KeyWordPosition> keyWordPositionsList) {
         FileWriter fileWriter = null;
         try{
             fileWriter = new FileWriter(csvName);
             CSVWriter csvWriter = new CSVWriter(fileWriter, ',');
 
-            String[] head = {"序号", "关键字", "关键字次数"};
+            String[] head = {"序号", "文件名（含路径）", "行号", "行起始位置", "行结束位置", "关键字"};
             csvWriter.writeNext(head);
 
-            for(KeyWord key : keyList){
-                String[] row = {Long.toString(key.getId()), key.getKeyWord(), Integer.toString(key.getCount())};
+            for(KeyWordPosition keyWordPosition : keyWordPositionsList){
+                String[] row = {Long.toString(keyWordPosition.getId()), keyWordPosition.getFile(),
+                        Integer.toString(keyWordPosition.getLinenum()),
+                        Integer.toString(keyWordPosition.getStart()),
+                        Integer.toString(keyWordPosition.getEnd()),
+                        keyWordPosition.getKeyWord()};
                 csvWriter.writeNext(row);
             }
         }catch (IOException e){
