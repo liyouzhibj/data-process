@@ -1,6 +1,6 @@
 package com.liyouzhi.dataprocess.service;
 
-import com.liyouzhi.dataprocess.dao.jpa.entity.KeyWord;
+import com.liyouzhi.dataprocess.domain.KeyWord;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

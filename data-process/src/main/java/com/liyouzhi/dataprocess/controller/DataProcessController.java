@@ -1,8 +1,10 @@
 package com.liyouzhi.dataprocess.controller;
 
 import com.liyouzhi.dataprocess.bo.KeyPosition;
-import com.liyouzhi.dataprocess.dao.jpa.entity.KeyWord;
-import com.liyouzhi.dataprocess.dao.jpa.entity.KeyWordPosition;
+import com.liyouzhi.dataprocess.domain.KeyWord;
+import com.liyouzhi.dataprocess.domain.KeyWordPosition;
+import com.liyouzhi.dataprocess.domain.KeyWordTranslation;
+import com.liyouzhi.dataprocess.domain.KeyWordTranslationPosition;
 import com.liyouzhi.dataprocess.service.DataProcess;
 import com.liyouzhi.dataprocess.service.DataRead;
 import com.liyouzhi.dataprocess.service.DataWrite;
@@ -38,6 +40,14 @@ public class DataProcessController {
     @Qualifier("keyPositionWriteToCSV")
     DataWrite dataWrite_KeyPosition;
 
+    @Autowired
+    @Qualifier("keyTranslationWriteToCSV")
+    DataWrite dataWrite_KeyTranslation;
+
+    @Autowired
+    @Qualifier("keyPositionTranslationWriteToCSV")
+    DataWrite dataWrite_KeyPositionTranslation;
+
     @Value("${data.path}")
     private String dataPath;
 
@@ -46,8 +56,6 @@ public class DataProcessController {
     * */
     @RequestMapping("/saveKeyWordToCSV")
     public String saveKeyWordToCSV(@RequestBody Map<String,Object> requestMap) {
-//        String path = "E:\\rrtx-svn\\wuzhou\\trunk\\ecs\\src\\main\\java";
-//        String regex = "[\u4e00-\u9fa5]+";
         String path = requestMap.get("path").toString();
         String regex = requestMap.get("regex").toString();
         String fileType = requestMap.get("fileType").toString();
@@ -100,6 +108,74 @@ public class DataProcessController {
         if (keyWordCount != 0) {
             dataWrite_Key.write(dataPath + "keyWord.csv", keyWords);
             dataWrite_KeyPosition.write(dataPath + "keyWordPosition.csv", keyWordPositions);
+        }
+
+        logger.info("KeyWord count: " + keyWordCount);
+        return "sucess";
+    }
+
+    /*
+     * Save key words to keyWordTranslation.csv and KeyWordTranslationPosition.csv
+     * */
+    @RequestMapping("/saveKeyWordTranslationToCSV")
+    public String saveKeyWordTranslationToCSV(@RequestBody Map<String,Object> requestMap) {
+        String path = requestMap.get("path").toString();
+        String regex = requestMap.get("regex").toString();
+        String fileType = requestMap.get("fileType").toString();
+        String sourceLang = requestMap.get("sourceLang").toString();
+        String targetLang = requestMap.get("targetLang").toString();
+
+        List<File> fileFilterBefore = dataRead.fileRecognition(path);
+        List<File> files = dataRead.fileFilter(fileFilterBefore, fileType);
+        List<KeyWordTranslation> keyWords = new ArrayList<>();
+        List<KeyWordTranslationPosition> keyWordPositions = new ArrayList<>();
+        int keyWordCount = 0;
+        int keyWordPositionCount = 0;
+
+        for (File file : files) {
+            Map<Integer, String> lineData = dataRead.readLine(file);
+            for (Map.Entry<Integer, String> entry : lineData.entrySet()) {
+                String filterAfter = (String) dataProcess.annotationFilter(entry.getValue());
+                List<KeyPosition> keys = dataProcess.getKey(filterAfter, regex);
+                for (KeyPosition keyPosition : keys) {
+                    KeyWordTranslationPosition keyWordPosition = new KeyWordTranslationPosition();
+                    keyWordPosition.setId(keyWordPositionCount);
+                    keyWordPosition.setFile(file.getAbsolutePath());
+                    keyWordPosition.setLinenum(entry.getKey());
+                    keyWordPosition.setStart(keyPosition.getStart());
+                    keyWordPosition.setEnd(keyPosition.getEnd());
+                    keyWordPosition.setKeyWord(keyPosition.getKey());
+                    String translationKey = (String)dataProcess.translationKey(keyPosition.getKey(), sourceLang, targetLang);
+                    keyWordPosition.setKeyWordTranslation(translationKey);
+                    keyWordPositions.add(keyWordPosition);
+                    keyWordPositionCount++;
+
+                    int count = 0;
+
+                    for (KeyWordTranslation keyWord : keyWords) {
+                        if (keyWord.getKeyWord().equals(keyPosition.getKey())) {
+                            int index = keyWords.indexOf(keyWord);
+                            count = keyWords.get(index).getCount() + 1;
+                            keyWords.get(index).setCount(count);
+                            break;
+                        }
+                    }
+
+                    if (count == 0) {
+                        KeyWordTranslation keyWord = new KeyWordTranslation();
+                        keyWord.setId(keyWordCount++);
+                        keyWord.setKeyWord(keyPosition.getKey());
+                        keyWord.setKeyWordTranslation(translationKey);
+                        keyWord.setCount(1);
+                        keyWords.add(keyWord);
+                    }
+                }
+            }
+        }
+
+        if (keyWordCount != 0) {
+            dataWrite_KeyTranslation.write(dataPath + "keyWordTranslation.csv", keyWords);
+            dataWrite_KeyPositionTranslation.write(dataPath + "keyWordTranslationPosition.csv", keyWordPositions);
         }
 
         logger.info("KeyWord count: " + keyWordCount);
