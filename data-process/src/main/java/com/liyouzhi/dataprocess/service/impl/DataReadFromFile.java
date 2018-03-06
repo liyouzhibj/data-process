@@ -9,10 +9,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
@@ -23,7 +20,7 @@ public class DataReadFromFile implements DataRead<File, Integer, String, String>
     @Override
     public Map<Integer, String> readLine(File file) {
         BufferedReader reader = null;
-        Map<Integer, String> map = new ConcurrentHashMap<>();
+        Map<Integer, String> map = new LinkedHashMap<>();
         try {
             FileReader fileReader = new FileReader(file);
             reader = new BufferedReader(fileReader);

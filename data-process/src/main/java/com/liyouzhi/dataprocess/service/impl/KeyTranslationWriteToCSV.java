@@ -1,6 +1,7 @@
 package com.liyouzhi.dataprocess.service.impl;
 
 import com.liyouzhi.dataprocess.domain.KeyWord;
+import com.liyouzhi.dataprocess.domain.KeyWordTranslation;
 import com.liyouzhi.dataprocess.service.DataWrite;
 import com.opencsv.CSVWriter;
 import org.slf4j.Logger;
@@ -11,22 +12,22 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 
-@Service("keyWriteToCSV")
-public class KeyWriteToCSV implements DataWrite<String, List<KeyWord>> {
+@Service("keyTranslationWriteToCSV")
+public class KeyTranslationWriteToCSV implements DataWrite<String, List<KeyWordTranslation>> {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Override
-    public void write(String csvName, List<KeyWord> keyList) {
+    public void write(String csvName, List<KeyWordTranslation> keyList) {
         FileWriter fileWriter = null;
         try{
             fileWriter = new FileWriter(csvName);
             CSVWriter csvWriter = new CSVWriter(fileWriter, ',');
 
-            String[] head = {"序号", "关键字", "关键字次数"};
+            String[] head = {"序号", "关键字", "关键字次数", "翻译"};
             csvWriter.writeNext(head);
 
-            for(KeyWord key : keyList){
-                String[] row = {Long.toString(key.getId()), key.getKeyWord(), Integer.toString(key.getCount())};
+            for(KeyWordTranslation key : keyList){
+                String[] row = {Long.toString(key.getId()), key.getKeyWord(), Integer.toString(key.getCount()), key.getKeyWordTranslation()};
                 csvWriter.writeNext(row);
             }
         }catch (IOException e){
