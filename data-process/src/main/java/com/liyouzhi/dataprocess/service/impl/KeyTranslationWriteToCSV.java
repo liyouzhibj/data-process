@@ -1,8 +1,7 @@
 package com.liyouzhi.dataprocess.service.impl;
 
-import com.liyouzhi.dataprocess.bo.KeyPosition;
 import com.liyouzhi.dataprocess.domain.KeyWord;
-import com.liyouzhi.dataprocess.domain.KeyWordPosition;
+import com.liyouzhi.dataprocess.domain.KeyWordTranslation;
 import com.liyouzhi.dataprocess.service.DataWrite;
 import com.opencsv.CSVWriter;
 import org.slf4j.Logger;
@@ -13,26 +12,22 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 
-@Service("keyPositionWriteToCSV")
-public class KeyPositionWriteToCSV implements DataWrite<String, List<KeyWordPosition>> {
+@Service("keyTranslationWriteToCSV")
+public class KeyTranslationWriteToCSV implements DataWrite<String, List<KeyWordTranslation>> {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Override
-    public void write(String csvName, List<KeyWordPosition> keyWordPositionsList) {
+    public void write(String csvName, List<KeyWordTranslation> keyList) {
         FileWriter fileWriter = null;
         try{
             fileWriter = new FileWriter(csvName);
             CSVWriter csvWriter = new CSVWriter(fileWriter, ',');
 
-            String[] head = {"序号", "文件名（含路径）", "行号", "行起始位置", "行结束位置", "关键字"};
+            String[] head = {"序号", "关键字", "关键字次数", "翻译"};
             csvWriter.writeNext(head);
 
-            for(KeyWordPosition keyWordPosition : keyWordPositionsList){
-                String[] row = {Long.toString(keyWordPosition.getId()), keyWordPosition.getFile(),
-                        Integer.toString(keyWordPosition.getLinenum()),
-                        Integer.toString(keyWordPosition.getStart()),
-                        Integer.toString(keyWordPosition.getEnd()),
-                        keyWordPosition.getKeyWord()};
+            for(KeyWordTranslation key : keyList){
+                String[] row = {Long.toString(key.getId()), key.getKeyWord(), Integer.toString(key.getCount()), key.getKeyWordTranslation()};
                 csvWriter.writeNext(row);
             }
         }catch (IOException e){

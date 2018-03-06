@@ -1,6 +1,6 @@
 package com.liyouzhi.dataprocess.service.impl;
 
-import com.liyouzhi.dataprocess.dao.jpa.entity.KeyWord;
+import com.liyouzhi.dataprocess.domain.KeyWord;
 import com.liyouzhi.dataprocess.service.DataWrite;
 import com.opencsv.CSVWriter;
 import org.slf4j.Logger;

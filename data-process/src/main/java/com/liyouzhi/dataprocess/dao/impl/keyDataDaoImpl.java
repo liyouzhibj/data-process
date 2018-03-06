@@ -1,7 +1,7 @@
 package com.liyouzhi.dataprocess.dao.impl;
 
 import com.liyouzhi.dataprocess.dao.DataDao;
-import com.liyouzhi.dataprocess.dao.jpa.entity.KeyWord;
+import com.liyouzhi.dataprocess.domain.KeyWord;
 
 import java.util.List;
 
