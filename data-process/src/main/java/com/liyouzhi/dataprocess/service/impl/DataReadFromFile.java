@@ -114,7 +114,7 @@ public class DataReadFromFile implements DataRead<File, Integer, String, String>
 
 
     @Override
-    public Map<Integer, String> readLine2(File file) {
+    public Map<Integer, String> readLineUTF8(File file) {
         BufferedReader reader = null;
         Map<Integer, String> map = new ConcurrentHashMap<>();
         try {

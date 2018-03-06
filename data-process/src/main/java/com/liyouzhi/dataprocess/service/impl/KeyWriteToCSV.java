@@ -41,7 +41,7 @@ public class KeyWriteToCSV implements DataWrite<String, List<KeyWord>> {
 
 
     @Override
-    public void write2(String csvName, List<KeyWord> keyList) {
+    public void writeUTF8(String csvName, List<KeyWord> keyList) {
         BufferedWriter fileWriter = null;
         try{
             OutputStreamWriter w = new OutputStreamWriter(new FileOutputStream(csvName),"utf-8");
