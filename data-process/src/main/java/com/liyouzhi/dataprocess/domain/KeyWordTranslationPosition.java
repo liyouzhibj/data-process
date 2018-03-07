@@ -1,7 +1,5 @@
 package com.liyouzhi.dataprocess.domain;
 
-import javax.persistence.*;
-
 public class KeyWordTranslationPosition {
     public KeyWordTranslationPosition(){}
 
