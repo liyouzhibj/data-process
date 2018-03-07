@@ -10,5 +10,5 @@ public interface DataWrite<T, V> {
     * */
     void write(T t, V v);
 
-    void writeUTF8(String csvName, List<KeyWord> keyList);
+    void writeUTF8(T csvName, V keyList);
 }

@@ -32,4 +32,12 @@ public class KeyWord {
     public void setCount(int count) {
         this.count = count;
     }
+
+    public KeyWord(long id,String keyWord,Integer count)
+    {
+        this.id = id;
+        this.keyWord = keyWord;
+        this.count = count;
+    }
+
 }

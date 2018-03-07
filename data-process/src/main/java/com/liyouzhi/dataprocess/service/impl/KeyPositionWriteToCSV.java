@@ -46,4 +46,33 @@ public class KeyPositionWriteToCSV implements DataWrite<String, List<KeyWordPosi
         }
     }
 
+    @Override
+    public void writeUTF8(String csvName, List<KeyWordPosition> keyWordPositionsList) {
+        FileWriter fileWriter = null;
+        try{
+            fileWriter = new FileWriter(csvName);
+            CSVWriter csvWriter = new CSVWriter(fileWriter, ',');
+
+            String[] head = {"序号", "文件名（含路径）", "行号", "行起始位置", "行结束位置", "关键字"};
+            csvWriter.writeNext(head);
+
+            for(KeyWordPosition keyWordPosition : keyWordPositionsList){
+                String[] row = {Long.toString(keyWordPosition.getId()), keyWordPosition.getFile(),
+                        Integer.toString(keyWordPosition.getLinenum()),
+                        Integer.toString(keyWordPosition.getStart()),
+                        Integer.toString(keyWordPosition.getEnd()),
+                        keyWordPosition.getKeyWord()};
+                csvWriter.writeNext(row);
+            }
+        }catch (IOException e){
+            logger.error(e.toString());
+        }finally {
+            try{
+                fileWriter.close();
+            }catch (IOException e){
+                logger.error(e.toString());
+            }
+        }
+    }
+
 }
