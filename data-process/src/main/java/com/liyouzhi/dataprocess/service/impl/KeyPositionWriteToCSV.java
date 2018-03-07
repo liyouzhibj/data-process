@@ -9,8 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.List;
 
 @Service("keyPositionWriteToCSV")
@@ -48,9 +47,9 @@ public class KeyPositionWriteToCSV implements DataWrite<String, List<KeyWordPosi
 
     @Override
     public void writeUTF8(String csvName, List<KeyWordPosition> keyWordPositionsList) {
-        FileWriter fileWriter = null;
+        BufferedWriter fileWriter = null;
         try{
-            fileWriter = new FileWriter(csvName);
+            OutputStreamWriter w = new OutputStreamWriter(new FileOutputStream(csvName),"utf-8");
             CSVWriter csvWriter = new CSVWriter(fileWriter, ',');
 
             String[] head = {"序号", "文件名（含路径）", "行号", "行起始位置", "行结束位置", "关键字"};

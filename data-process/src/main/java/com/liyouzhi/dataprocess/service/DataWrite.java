@@ -1,7 +1,5 @@
 package com.liyouzhi.dataprocess.service;
 
-import com.liyouzhi.dataprocess.dao.jpa.entity.KeyWord;
-
 import java.util.List;
 
 public interface DataWrite<T, V> {
