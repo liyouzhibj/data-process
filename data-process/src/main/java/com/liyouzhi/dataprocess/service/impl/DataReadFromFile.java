@@ -11,6 +11,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStreamReader;
 
 @Service
 public class DataReadFromFile implements DataRead<File, Integer, String, String> {
@@ -103,4 +106,38 @@ public class DataReadFromFile implements DataRead<File, Integer, String, String>
 
         return result;
     }
+
+
+
+
+    @Override
+    public Map<Integer, String> readLineUTF8(File file) {
+        BufferedReader reader = null;
+        Map<Integer, String> map = new ConcurrentHashMap<>();
+        try {
+
+            InputStreamReader r = new InputStreamReader(new FileInputStream(file), "utf-8");
+            BufferedReader read = new BufferedReader(r);
+            String tempString = null;
+            int line = 1;
+
+            while ((tempString = reader.readLine()) != null){
+                map.put(line, tempString);
+                logger.info("line no " + line + " : " + tempString);
+                line++;
+            }
+        } catch (IOException e) {
+            logger.error(e.toString());
+        }
+        finally {
+            try{
+                reader.close();
+            }catch (IOException e){
+                logger.error(e.toString());
+            }
+        }
+
+        return map;
+    }
+
 }

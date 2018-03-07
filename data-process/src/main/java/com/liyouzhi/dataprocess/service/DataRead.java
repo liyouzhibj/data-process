@@ -1,5 +1,6 @@
 package com.liyouzhi.dataprocess.service;
 
+import java.io.File;
 import java.util.List;
 import java.util.Map;
 
@@ -19,4 +20,6 @@ public interface DataRead<T, K, V, S> {
     *Filter file for type s
     * */
     List<T> fileFilter(List<T> t, S s);
+
+    Map<Integer, String> readLineUTF8(File file);
 }
