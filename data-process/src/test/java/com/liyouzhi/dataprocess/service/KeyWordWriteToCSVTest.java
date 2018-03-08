@@ -30,6 +30,6 @@ public class KeyWordWriteToCSVTest {
         keys.add(key);
 
         String csvName = "data/test.csv";
-        dataWrite.write(csvName, keys);
+        dataWrite.write(csvName, keys, "utf-8");
     }
 }

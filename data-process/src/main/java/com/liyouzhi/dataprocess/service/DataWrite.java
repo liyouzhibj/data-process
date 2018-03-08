@@ -2,11 +2,10 @@ package com.liyouzhi.dataprocess.service;
 
 import java.util.List;
 
-public interface DataWrite<T, V> {
-    /**
-    *Write data 'v' to file 't'
-    * */
-    void write(T t, V v);
+public interface DataWrite<T, V, L> {
 
-    void writeUTF8(T csvName, V keyList);
+    /**
+    *Write data 'v' to file 't' use 'l' encode.
+    * */
+    void write(T t, V v, L l);
 }

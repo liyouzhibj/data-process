@@ -27,29 +27,29 @@ public class DataProcessImpl implements DataProcess<String, KeyPosition, String,
     @Value("${youdao.secret.key}")
     private String youdaoSecretKey;
 
+    @Value("${youdao.api.url}")
+    private String youdaoApiUrl;
+
     @Override
     public String annotationFilter(String note) {
-        if(note == null || "".equals(note.trim()))
-        {
+        if (note == null || "".equals(note.trim())) {
             return null;
         }
-        NoteStatus noteStatus =  NoteStatus.getInstance();
+        NoteStatus noteStatus = NoteStatus.getInstance();
 
-        StringBuffer a  = new StringBuffer("");
+        StringBuffer a = new StringBuffer("");
 
 
         String[] aaa = note.split("\"(.*?)\"");
         List<String> quats = new ArrayList<String>();
-        Pattern p=Pattern.compile("\"(.*?)\"");
-        Matcher m=p.matcher(note);
-        while(m.find())
-        {
+        Pattern p = Pattern.compile("\"(.*?)\"");
+        Matcher m = p.matcher(note);
+        while (m.find()) {
             quats.add(m.group());
         }
-        if(quats.size()>0)
-        {
+        if (quats.size() > 0) {
             int i = 0;
-            int length = aaa.length-1;
+            int length = aaa.length - 1;
             for (String temp : aaa) {
                 if (noteStatus.isHasStart()) {
                     return "";
@@ -71,38 +71,31 @@ public class DataProcessImpl implements DataProcess<String, KeyPosition, String,
 
                 a.append(temp.replaceAll("(?<!:)\\/\\/.*|\\/\\*(\\s|.)*?\\*\\/", ""));
 
-                if(i<length)
-                {
+                if (i < length) {
                     a.append(quats.get(i));
                 }
                 i++;
             }
-        }else
-        {
+        } else {
             if (note.indexOf("/*") >= 0) {
                 noteStatus.setHasStart(true);
-                if(note.indexOf("/*") > 0)
-                {
+                if (note.indexOf("/*") > 0) {
                     a.append(note.substring(0, note.indexOf("/*")));
-                }else
-                {
-                    note="";
+                } else {
+                    note = "";
                 }
             }
-            if(noteStatus.isHasStart() && note.indexOf("*/") >= 0 )
-            {
+            if (noteStatus.isHasStart() && note.indexOf("*/") >= 0) {
                 if (note.indexOf("*/") >= 0) {
                     noteStatus.setHasStart(false);
-                    if(note.endsWith("*/"))
-                    {
+                    if (note.endsWith("*/")) {
                         a.append("");
-                    }else {
+                    } else {
                         a.append(note.substring(note.indexOf("*/"), note.length()));
                     }
                     return a.toString();
                 }
-            }else if(noteStatus.isHasStart())
-            {
+            } else if (noteStatus.isHasStart()) {
                 return "";
             }
 
@@ -114,14 +107,14 @@ public class DataProcessImpl implements DataProcess<String, KeyPosition, String,
 
     @Override
     public List<KeyPosition> getKey(String sourceData, String regex) {
-        if(null == sourceData){
+        if (null == sourceData) {
             sourceData = "";
         }
         Pattern p = Pattern.compile(regex);
         Matcher m = p.matcher(sourceData);
         List<KeyPosition> list = new ArrayList<>();
 
-        while(m.find()) {
+        while (m.find()) {
             KeyPosition keyPosition = new KeyPosition();
             keyPosition.setStart(m.start());
             keyPosition.setEnd(m.end());
@@ -141,28 +134,28 @@ public class DataProcessImpl implements DataProcess<String, KeyPosition, String,
         String keyTranslation = "";
 
         String appKey = youdaoAppKey;
-		String query = key;
-		String salt = String.valueOf(System.currentTimeMillis());
-		String from = sourceLang;
-		String to = targetLang;
-		String sign = httpRequest.md5(appKey + query + salt + youdaoSecretKey);
-		Map<String, String> params = new HashMap<>();
-		params.put("q", query);
-		params.put("from", from);
-		params.put("to", to);
-		params.put("sign", sign);
-		params.put("salt", salt);
-		params.put("appKey", appKey);
-		try{
-            String result = httpRequest.requestForHttp("http://openapi.youdao.com/api", params);
+        String query = key;
+        String salt = String.valueOf(System.currentTimeMillis());
+        String from = sourceLang;
+        String to = targetLang;
+        String sign = httpRequest.md5(appKey + query + salt + youdaoSecretKey);
+        Map<String, String> params = new HashMap<>();
+        params.put("q", query);
+        params.put("from", from);
+        params.put("to", to);
+        params.put("sign", sign);
+        params.put("salt", salt);
+        params.put("appKey", appKey);
+        try {
+            String result = httpRequest.requestForHttp(youdaoApiUrl, params);
             JSONObject jsonObject = new JSONObject(result);
             keyTranslation = jsonObject.getString("translation");
-            if(keyTranslation != null && !keyTranslation.equals("")){
-                keyTranslation = keyTranslation.substring(2, keyTranslation.length()-2);
+            if (keyTranslation != null && !keyTranslation.equals("")) {
+                keyTranslation = keyTranslation.substring(2, keyTranslation.length() - 2);
             }
             logger.info("source key: " + key + " translation to : " + keyTranslation);
-        }catch (Exception e){
-		    logger.error("translation error: ", e.toString());
+        } catch (Exception e) {
+            logger.error("translation error: ", e.toString());
         }
 
         return keyTranslation;

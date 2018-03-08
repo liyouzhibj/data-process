@@ -21,5 +21,4 @@ public interface DataRead<T, K, V, S> {
     * */
     List<T> fileFilter(List<T> t, S s);
 
-    Map<Integer, String> readLineUTF8(File file);
 }
