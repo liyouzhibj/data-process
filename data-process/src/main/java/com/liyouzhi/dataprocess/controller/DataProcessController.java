@@ -8,21 +8,24 @@ import com.liyouzhi.dataprocess.domain.KeyWordTranslationPosition;
 import com.liyouzhi.dataprocess.service.DataProcess;
 import com.liyouzhi.dataprocess.service.DataRead;
 import com.liyouzhi.dataprocess.service.DataWrite;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import com.liyouzhi.dataprocess.service.impl.KeyWriteToExcel;
 
+import javax.annotation.Resource;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 @RestController
+@Api(value = "测试管理", description = "测试管理")
 public class DataProcessController {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -55,6 +58,7 @@ public class DataProcessController {
     * Save key words to keyWord.csv and KeyWordPosition.csv
     * */
     @RequestMapping("/saveKeyWordToCSV")
+    @ApiOperation(value = "保存数据到csv")
     public String saveKeyWordToCSV(@RequestBody Map<String,Object> requestMap) {
         String path = requestMap.get("path").toString();
         String regex = requestMap.get("regex").toString();
@@ -117,7 +121,8 @@ public class DataProcessController {
     /*
      * Save key words to keyWordTranslation.csv and KeyWordTranslationPosition.csv
      * */
-    @RequestMapping("/saveKeyWordTranslationToCSV")
+    @RequestMapping(value="/saveKeyWordTranslationToCSV",method = RequestMethod.POST)
+    @ApiOperation(value = "保存数据的翻译到csv")
     public String saveKeyWordTranslationToCSV(@RequestBody Map<String,Object> requestMap) {
         String path = requestMap.get("path").toString();
         String regex = requestMap.get("regex").toString();
@@ -180,5 +185,19 @@ public class DataProcessController {
 
         logger.info("KeyWord count: " + keyWordCount);
         return "sucess";
+    }
+
+    @Resource
+    KeyWriteToExcel keyWriteToExcel;
+
+    @ResponseBody
+    @RequestMapping("/test")
+    public  String test()
+    {
+        List<KeyWord> keyList = new ArrayList<KeyWord>();
+        keyList.add(new KeyWord(1l,"111",1));
+        keyList.add(new KeyWord(2l,"222",1));
+        keyWriteToExcel.write("C:\\D\\aaa.xlsx",keyList);
+        return "success";
     }
 }
