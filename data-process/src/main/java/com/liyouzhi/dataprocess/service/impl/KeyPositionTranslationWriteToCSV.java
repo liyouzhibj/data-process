@@ -20,6 +20,12 @@ public class KeyPositionTranslationWriteToCSV implements DataWrite<String, List<
     public void write(String csvName, List<KeyWordTranslationPosition> keyWordTranslationPositionList, String charset) {
         BufferedWriter fileWriter = null;
         try {
+            File file = new File(csvName.substring(0,csvName.lastIndexOf("/")));
+            if(!file.exists())
+            {
+                file.mkdirs();
+                //file.createNewFile();
+            }
             OutputStreamWriter w = new OutputStreamWriter(new FileOutputStream(csvName), charset);
             fileWriter = new BufferedWriter(w);
             CSVWriter csvWriter = new CSVWriter(fileWriter, ',');

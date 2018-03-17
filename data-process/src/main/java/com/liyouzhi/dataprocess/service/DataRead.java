@@ -1,5 +1,7 @@
 package com.liyouzhi.dataprocess.service;
 
+import com.liyouzhi.dataprocess.domain.KeyWordTranslationPosition;
+
 import java.io.File;
 import java.util.List;
 import java.util.Map;
@@ -23,4 +25,5 @@ public interface DataRead<T, K, V, S, O> {
 
     List<O> readLienToObject(T t);
 
+    Map<String,List<KeyWordTranslationPosition>>  readLienToMap(T t);
 }
