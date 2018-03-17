@@ -30,18 +30,17 @@ public class DataReadFromFile implements DataRead<File, Integer, String, String>
             String tempString = null;
             int line = 1;
 
-            while ((tempString = reader.readLine()) != null){
+            while ((tempString = reader.readLine()) != null) {
                 map.put(line, tempString);
                 logger.info("line no " + line + " : " + tempString);
                 line++;
             }
         } catch (IOException e) {
             logger.error(e.toString());
-        }
-        finally {
-            try{
+        } finally {
+            try {
                 reader.close();
-            }catch (IOException e){
+            } catch (IOException e) {
                 logger.error(e.toString());
             }
         }
@@ -90,54 +89,20 @@ public class DataReadFromFile implements DataRead<File, Integer, String, String>
 
     @Override
     public List<File> fileFilter(List<File> fileList, String fileType) {
-        if(fileType.equals("")){
+        if (fileType.equals("")) {
             return fileList;
         }
 
         List<File> result = new LinkedList<>();
-        for(File file : fileList){
+        for (File file : fileList) {
             String fileName = file.getName();
             String type = fileName.substring(fileName.lastIndexOf(".") + 1);
             System.out.println(type);
-            if(fileType.equals(type)){
+            if (fileType.equals(type)) {
                 result.add(file);
             }
         }
 
         return result;
     }
-
-
-
-
-    @Override
-    public Map<Integer, String> readLineUTF8(File file) {
-        BufferedReader reader = null;
-        Map<Integer, String> map = new ConcurrentHashMap<>();
-        try {
-
-            InputStreamReader r = new InputStreamReader(new FileInputStream(file), "utf-8");
-            BufferedReader read = new BufferedReader(r);
-            String tempString = null;
-            int line = 1;
-
-            while ((tempString = reader.readLine()) != null){
-                map.put(line, tempString);
-                logger.info("line no " + line + " : " + tempString);
-                line++;
-            }
-        } catch (IOException e) {
-            logger.error(e.toString());
-        }
-        finally {
-            try{
-                reader.close();
-            }catch (IOException e){
-                logger.error(e.toString());
-            }
-        }
-
-        return map;
-    }
-
 }

@@ -2,7 +2,6 @@ package com.liyouzhi.dataprocess.service.impl;
 
 import com.liyouzhi.dataprocess.domain.KeyWord;
 import com.liyouzhi.dataprocess.service.DataWrite;
-import com.opencsv.CSVWriter;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
 import org.slf4j.Logger;
@@ -13,11 +12,11 @@ import java.io.*;
 import java.util.List;
 
 @Service("keyWriteToExcel")
-public class KeyWriteToExcel implements DataWrite<String, List<KeyWord>> {
+public class KeyWriteToExcel implements DataWrite<String, List<KeyWord>,String> {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Override
-    public void write(String fileName, List<KeyWord> keyList)
+    public void write(String fileName, List<KeyWord> keyList, String charset)
     {
        // File file = new File(fileName);
         try
@@ -57,13 +56,6 @@ public class KeyWriteToExcel implements DataWrite<String, List<KeyWord>> {
         {
             logger.error("生成excel异常",e);
         }
-    }
-
-
-
-    @Override
-    public void writeUTF8(String csvName, List<KeyWord> keyList) {
-
     }
 
 }

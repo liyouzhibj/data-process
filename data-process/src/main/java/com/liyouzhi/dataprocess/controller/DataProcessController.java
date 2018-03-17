@@ -9,6 +9,8 @@ import com.liyouzhi.dataprocess.service.DataProcess;
 import com.liyouzhi.dataprocess.service.DataRead;
 import com.liyouzhi.dataprocess.service.DataWrite;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,16 +18,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
-import com.liyouzhi.dataprocess.service.impl.KeyWriteToExcel;
 
-import javax.annotation.Resource;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 @RestController
-@Api(value = "测试管理", description = "测试管理")
+@Api(value = "Data process", description = "Data process")
 public class DataProcessController {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -54,12 +54,15 @@ public class DataProcessController {
     @Value("${data.path}")
     private String dataPath;
 
+    @Value("${data.write.charset}")
+    private String dataWriteCharset;
+
     /*
-    * Save key words to keyWord.csv and KeyWordPosition.csv
-    * */
-    @RequestMapping("/saveKeyWordToCSV")
-    @ApiOperation(value = "保存数据到csv")
-    public String saveKeyWordToCSV(@RequestBody Map<String,Object> requestMap) {
+     * Save key words to keyWord.csv and KeyWordPosition.csv
+     * */
+    @ApiOperation(value = "Save key word to csv file")
+    @RequestMapping(value = "/saveKeyWordToCSV", method = RequestMethod.POST)
+    public String saveKeyWordToCSV(@RequestBody Map<String, Object> requestMap) {
         String path = requestMap.get("path").toString();
         String regex = requestMap.get("regex").toString();
         String fileType = requestMap.get("fileType").toString();
@@ -110,8 +113,8 @@ public class DataProcessController {
         }
 
         if (keyWordCount != 0) {
-            dataWrite_Key.write(dataPath + "keyWord.csv", keyWords);
-            dataWrite_KeyPosition.write(dataPath + "keyWordPosition.csv", keyWordPositions);
+            dataWrite_Key.write(dataPath + "keyWord.csv", keyWords, dataWriteCharset);
+            dataWrite_KeyPosition.write(dataPath + "keyWordPosition.csv", keyWordPositions, dataWriteCharset);
         }
 
         logger.info("KeyWord count: " + keyWordCount);
@@ -121,9 +124,9 @@ public class DataProcessController {
     /*
      * Save key words to keyWordTranslation.csv and KeyWordTranslationPosition.csv
      * */
-    @RequestMapping(value="/saveKeyWordTranslationToCSV",method = RequestMethod.POST)
-    @ApiOperation(value = "保存数据的翻译到csv")
-    public String saveKeyWordTranslationToCSV(@RequestBody Map<String,Object> requestMap) {
+    @ApiOperation(value = "Save key word translation to csv file")
+    @RequestMapping(value = "/saveKeyWordTranslationToCSV", method = RequestMethod.POST)
+    public String saveKeyWordTranslationToCSV(@RequestBody Map<String, Object> requestMap) {
         String path = requestMap.get("path").toString();
         String regex = requestMap.get("regex").toString();
         String fileType = requestMap.get("fileType").toString();
@@ -150,7 +153,7 @@ public class DataProcessController {
                     keyWordPosition.setStart(keyPosition.getStart());
                     keyWordPosition.setEnd(keyPosition.getEnd());
                     keyWordPosition.setKeyWord(keyPosition.getKey());
-                    String translationKey = (String)dataProcess.translationKey(keyPosition.getKey(), sourceLang, targetLang);
+                    String translationKey = (String) dataProcess.translationKey(keyPosition.getKey(), sourceLang, targetLang);
                     keyWordPosition.setKeyWordTranslation(translationKey);
                     keyWordPositions.add(keyWordPosition);
                     keyWordPositionCount++;
@@ -179,25 +182,11 @@ public class DataProcessController {
         }
 
         if (keyWordCount != 0) {
-            dataWrite_KeyTranslation.write(dataPath + "keyWordTranslation.csv", keyWords);
-            dataWrite_KeyPositionTranslation.write(dataPath + "keyWordTranslationPosition.csv", keyWordPositions);
+            dataWrite_KeyTranslation.write(dataPath + "keyWordTranslation.csv", keyWords, dataWriteCharset);
+            dataWrite_KeyPositionTranslation.write(dataPath + "keyWordTranslationPosition.csv", keyWordPositions, dataWriteCharset);
         }
 
         logger.info("KeyWord count: " + keyWordCount);
         return "sucess";
-    }
-
-    @Resource
-    KeyWriteToExcel keyWriteToExcel;
-
-    @ResponseBody
-    @RequestMapping("/test")
-    public  String test()
-    {
-        List<KeyWord> keyList = new ArrayList<KeyWord>();
-        keyList.add(new KeyWord(1l,"111",1));
-        keyList.add(new KeyWord(2l,"222",1));
-        keyWriteToExcel.write("C:\\D\\aaa.xlsx",keyList);
-        return "success";
     }
 }

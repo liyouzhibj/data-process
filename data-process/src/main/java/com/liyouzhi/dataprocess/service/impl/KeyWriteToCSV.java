@@ -11,56 +11,30 @@ import java.io.*;
 import java.util.List;
 
 @Service("keyWriteToCSV")
-public class KeyWriteToCSV implements DataWrite<String, List<KeyWord>> {
+public class KeyWriteToCSV implements DataWrite<String, List<KeyWord>, String> {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Override
-    public void write(String csvName, List<KeyWord> keyList) {
-        FileWriter fileWriter = null;
-        try{
-            fileWriter = new FileWriter(csvName);
-            CSVWriter csvWriter = new CSVWriter(fileWriter, ',');
-
-            String[] head = {"序号", "关键字", "关键字次数"};
-            csvWriter.writeNext(head);
-
-            for(KeyWord key : keyList){
-                String[] row = {Long.toString(key.getId()), key.getKeyWord(), Integer.toString(key.getCount())};
-                csvWriter.writeNext(row);
-            }
-        }catch (IOException e){
-            logger.error(e.toString());
-        }finally {
-            try{
-                fileWriter.close();
-            }catch (IOException e){
-                logger.error(e.toString());
-            }
-        }
-    }
-
-
-    @Override
-    public void writeUTF8(String csvName, List<KeyWord> keyList) {
+    public void write(String csvName, List<KeyWord> keyList, String charset) {
         BufferedWriter fileWriter = null;
-        try{
-            OutputStreamWriter w = new OutputStreamWriter(new FileOutputStream(csvName),"utf-8");
+        try {
+            OutputStreamWriter w = new OutputStreamWriter(new FileOutputStream(csvName), charset);
             fileWriter = new BufferedWriter(w);
             CSVWriter csvWriter = new CSVWriter(fileWriter, ',');
 
             String[] head = {"序号", "关键字", "关键字次数"};
             csvWriter.writeNext(head);
 
-            for(KeyWord key : keyList){
+            for (KeyWord key : keyList) {
                 String[] row = {Long.toString(key.getId()), key.getKeyWord(), Integer.toString(key.getCount())};
                 csvWriter.writeNext(row);
             }
-        }catch (IOException e){
+        } catch (IOException e) {
             logger.error(e.toString());
-        }finally {
-            try{
+        } finally {
+            try {
                 fileWriter.close();
-            }catch (IOException e){
+            } catch (IOException e) {
                 logger.error(e.toString());
             }
         }
