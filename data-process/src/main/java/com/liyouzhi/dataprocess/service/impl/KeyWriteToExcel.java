@@ -12,31 +12,25 @@ import java.io.*;
 import java.util.List;
 
 @Service("keyWriteToExcel")
-public class KeyWriteToExcel implements DataWrite<String, List<KeyWord>,String> {
+public class KeyWriteToExcel implements DataWrite<String, List<KeyWord>, String> {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Override
-    public void write(String fileName, List<KeyWord> keyList, String charset)
-    {
-       // File file = new File(fileName);
-        try
-        {
-            Workbook swb = new HSSFWorkbook();//WorkbookFactory.create(new FileInputStream(new File(fileName)));
-          //  swb.write(new FileOutputStream(new File(fileName)));
+    public void write(String fileName, List<KeyWord> keyList, String charset) {
+        try {
+            Workbook swb = new HSSFWorkbook();
             Sheet sheet = swb.createSheet();
             String[] head = {"序号", "关键字", "关键字次数", "翻译"};
 
             Row row = sheet.createRow(0);
             int length = head.length;
-            for(int i =0;i<length;i++)
-            {
+            for (int i = 0; i < length; i++) {
                 Cell cell = row.createCell(i);
                 cell.setCellValue(head[i]);
             }
             int j = 0;
-            for(KeyWord key:keyList)
-            {
-                row = sheet.createRow(j+1);
+            for (KeyWord key : keyList) {
+                row = sheet.createRow(j + 1);
 
                 Cell cell = row.createCell(0);
                 cell.setCellValue(key.getId());
@@ -52,9 +46,8 @@ public class KeyWriteToExcel implements DataWrite<String, List<KeyWord>,String> 
 
             swb.write(new FileOutputStream(new File(fileName)));
             swb.close();
-        }catch(Exception e)
-        {
-            logger.error("生成excel异常",e);
+        } catch (Exception e) {
+            logger.error("Create excel file error: ", e);
         }
     }
 

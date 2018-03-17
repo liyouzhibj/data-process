@@ -5,12 +5,8 @@ import com.liyouzhi.dataprocess.domain.KeyWord;
 import com.liyouzhi.dataprocess.domain.KeyWordPosition;
 import com.liyouzhi.dataprocess.domain.KeyWordTranslation;
 import com.liyouzhi.dataprocess.domain.KeyWordTranslationPosition;
-import com.liyouzhi.dataprocess.service.DataProcess;
-import com.liyouzhi.dataprocess.service.DataRead;
-import com.liyouzhi.dataprocess.service.DataWrite;
+import com.liyouzhi.dataprocess.service.*;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,6 +32,12 @@ public class DataProcessController {
     DataProcess dataProcess;
 
     @Autowired
+    KeySeekPosithon keySeekPosithon;
+
+    @Autowired
+    DataDelete dataDelete;
+
+    @Autowired
     @Qualifier("keyWriteToCSV")
     DataWrite dataWrite_Key;
 
@@ -50,6 +52,10 @@ public class DataProcessController {
     @Autowired
     @Qualifier("keyPositionTranslationWriteToCSV")
     DataWrite dataWrite_KeyPositionTranslation;
+
+    @Autowired
+    @Qualifier("KeyTranslationWriteToFile")
+    DataWrite dataWrite_KeyTranslationWriteToFile;
 
     @Value("${data.path}")
     private String dataPath;
@@ -121,7 +127,7 @@ public class DataProcessController {
         return "sucess";
     }
 
-    /*
+    /**
      * Save key words to keyWordTranslation.csv and KeyWordTranslationPosition.csv
      * */
     @ApiOperation(value = "Save key word translation to csv file")
@@ -187,6 +193,22 @@ public class DataProcessController {
         }
 
         logger.info("KeyWord count: " + keyWordCount);
+        return "sucess";
+    }
+
+    /**
+     * Repalace key word from KeyWordTranslationPosition.csv
+     * */
+    @ApiOperation(value = "Replace key word from csv file")
+    @RequestMapping(value = "/replaceKeyWordFromCSV", method = RequestMethod.POST)
+    public String replaceKeyWordFromCSV(@RequestBody Map<String, Object> requestMap){
+        String fileName = requestMap.get("fileName").toString();
+        List<KeyWordTranslationPosition> keyList = dataRead.readLienToObject(new File(fileName));
+        for(KeyWordTranslationPosition key : keyList){
+            dataDelete.deleteKeyWordFromFile(key.getFile(), key.getLinenum(), key.getStart(), key.getEnd());
+            long seek = (long)keySeekPosithon.keySeekPosition(new File(key.getFile()), key.getLinenum(), key.getStart());
+            dataWrite_KeyTranslationWriteToFile.write(key.getFile(), seek, key.getKeyWordTranslation());
+        }
         return "sucess";
     }
 }
