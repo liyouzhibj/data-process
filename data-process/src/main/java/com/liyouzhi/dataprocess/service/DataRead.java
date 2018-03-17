@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.List;
 import java.util.Map;
 
-public interface DataRead<T, K, V, S> {
+public interface DataRead<T, K, V, S, O> {
     /**
     * Read a Line from t, return line number for type K and line value for type V
     * */
@@ -20,5 +20,7 @@ public interface DataRead<T, K, V, S> {
     *Filter file for type s
     * */
     List<T> fileFilter(List<T> t, S s);
+
+    List<O> readLienToObject(T t);
 
 }
