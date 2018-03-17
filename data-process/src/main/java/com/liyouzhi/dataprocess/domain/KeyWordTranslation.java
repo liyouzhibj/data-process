@@ -39,4 +39,11 @@ public class KeyWordTranslation {
     public void setCount(int count) {
         this.count = count;
     }
+
+    public KeyWordTranslation(long id, String keyWord, String keyWordTranslation, int count) {
+        this.id = id;
+        this.keyWord = keyWord;
+        this.keyWordTranslation = keyWordTranslation;
+        this.count = count;
+    }
 }

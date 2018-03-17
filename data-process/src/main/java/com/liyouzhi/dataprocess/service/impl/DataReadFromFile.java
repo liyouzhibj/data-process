@@ -143,4 +143,48 @@ public class DataReadFromFile implements DataRead<File, Integer, String, String,
         }
         return keyList;
     }
+
+
+    @Override
+    public Map<String,List<KeyWordTranslationPosition>> readLienToMap(File file) {
+        Map<String,List<KeyWordTranslationPosition>> keyList = new HashMap<>();
+        BufferedReader reader = null;
+        try {
+            FileReader fileReader = new FileReader(file);
+            reader = new BufferedReader(fileReader);
+            CSVReader csvReader = new CSVReader(reader);
+            String[] tempString = null;
+            int line = 2;
+            csvReader.readNext();  //Begin linenum 2
+
+            while ((tempString = csvReader.readNext()) != null) {
+                KeyWordTranslationPosition key = new KeyWordTranslationPosition();
+                key.setId(Long.parseLong(tempString[0]));
+                key.setFile(tempString[1]);
+                key.setLinenum(Integer.parseInt(tempString[2]));
+                key.setStart(Integer.parseInt(tempString[3]));
+                key.setEnd(Integer.parseInt(tempString[4]));
+                key.setKeyWord(tempString[5]);
+                key.setKeyWordTranslation(tempString[6]);
+              if( keyList.get(tempString[1]+"_"+tempString[2])!=null)
+              {
+                  keyList.get(tempString[1]+"_"+tempString[2]).add(key);
+              }else {
+                  List<KeyWordTranslationPosition> temp = new ArrayList<>();
+                  temp.add(key);
+                  keyList.put(tempString[1] + "_" + tempString[2], temp);
+              }
+              line++;
+            }
+        } catch (IOException e) {
+            logger.error(e.toString());
+        } finally {
+            try {
+                reader.close();
+            } catch (IOException e) {
+                logger.error(e.toString());
+            }
+        }
+        return keyList;
+    }
 }
