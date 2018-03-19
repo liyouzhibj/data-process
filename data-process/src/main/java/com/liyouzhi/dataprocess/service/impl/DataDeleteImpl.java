@@ -28,7 +28,6 @@ public class DataDeleteImpl implements DataDelete<String, Integer>{
             while ((tempString = reader.readLine()) != null) {
                 if(line == lineNum){
                     tempString = tempString.substring(0, start) + tempString.substring(end, tempString.length());
-//                    logger.info("Delete Key word: " + tempString.substring(start, end - start));
                     writer.write(tempString);
                     writer.newLine();
                     line++;

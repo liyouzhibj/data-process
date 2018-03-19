@@ -23,7 +23,14 @@ public interface DataRead<T, K, V, S, O> {
     * */
     List<T> fileFilter(List<T> t, S s);
 
-    List<O> readLienToObject(T t);
+    /**
+     * Read a line from file t to object o
+     * */
+    List<O> readLineToObject(T t);
 
-    Map<String,List<KeyWordTranslationPosition>>  readLienToMap(T t);
+
+    /**
+     * Read a line from file t to map
+     * */
+    Map<String,List<KeyWordTranslationPosition>>  readLineToMap(T t);
 }

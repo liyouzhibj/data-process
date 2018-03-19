@@ -151,7 +151,7 @@ public class DataProcessImpl implements DataProcess<String, KeyPosition, String,
             JSONObject jsonObject = new JSONObject(result);
             keyTranslation = jsonObject.getString("translation");
             if (keyTranslation != null && !keyTranslation.equals("")) {
-                keyTranslation = keyTranslation.substring(2, keyTranslation.length() - 2);
+                keyTranslation = keyTranslation.substring(2, keyTranslation.length() - 2).replace(",", "");
             }
             logger.info("source key: " + key + " translation to : " + keyTranslation);
         } catch (Exception e) {

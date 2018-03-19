@@ -109,7 +109,7 @@ public class DataReadFromFile implements DataRead<File, Integer, String, String,
     }
 
     @Override
-    public List<KeyWordTranslationPosition> readLienToObject(File file) {
+    public List<KeyWordTranslationPosition> readLineToObject(File file) {
         List<KeyWordTranslationPosition> keyList = new LinkedList<>();
         BufferedReader reader = null;
         try {
@@ -146,7 +146,7 @@ public class DataReadFromFile implements DataRead<File, Integer, String, String,
 
 
     @Override
-    public Map<String,List<KeyWordTranslationPosition>> readLienToMap(File file) {
+    public Map<String,List<KeyWordTranslationPosition>> readLineToMap(File file) {
         Map<String,List<KeyWordTranslationPosition>> keyList = new HashMap<>();
         BufferedReader reader = null;
         try {
