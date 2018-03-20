@@ -56,9 +56,6 @@ public class DataProcessController {
     @Qualifier("KeyTranslationWriteToFile")
     DataWrite dataWrite_KeyTranslationWriteToFile;
 
-    @Value("${data.path}")
-    private String dataPath;
-
     @Value("${data.write.charset}")
     private String dataWriteCharset;
 
@@ -68,7 +65,8 @@ public class DataProcessController {
     @ApiOperation(value = "Save key word to csv file")
     @RequestMapping(value = "/saveKeyWordToCSV", method = RequestMethod.POST)
     public String saveKeyWordToCSV(@RequestBody Map<String, Object> requestMap) {
-        String path = requestMap.get("path").toString();
+        String path = requestMap.get("dataPath").toString();
+        String resultPath = requestMap.get("resultPath").toString();
         String regex = requestMap.get("regex").toString();
         String fileType = requestMap.get("fileType").toString();
 
@@ -123,8 +121,8 @@ public class DataProcessController {
         }
 
         if (keyWordCount != 0) {
-            dataWrite_Key.write(dataPath + "keyWord.csv", keyWords, dataWriteCharset);
-            dataWrite_KeyPosition.write(dataPath + "keyWordPosition.csv", keyWordPositions, dataWriteCharset);
+            dataWrite_Key.write(resultPath + "keyWord.csv", keyWords, dataWriteCharset);
+            dataWrite_KeyPosition.write(resultPath + "keyWordPosition.csv", keyWordPositions, dataWriteCharset);
         }
 
         logger.info("KeyWord count: " + keyWordCount);
@@ -137,7 +135,8 @@ public class DataProcessController {
     @ApiOperation(value = "Save key word translation to csv file")
     @RequestMapping(value = "/saveKeyWordTranslationToCSV", method = RequestMethod.POST)
     public String saveKeyWordTranslationToCSV(@RequestBody Map<String, Object> requestMap) {
-        String path = requestMap.get("path").toString();
+        String path = requestMap.get("dataPath").toString();
+        String resultPath = requestMap.get("resultPath").toString();
         String regex = requestMap.get("regex").toString();
         String fileType = requestMap.get("fileType").toString();
         String sourceLang = requestMap.get("sourceLang").toString();
@@ -187,8 +186,8 @@ public class DataProcessController {
             keyWords.add(temp);
         }
         if (keyWordCount != 0) {
-            dataWrite_KeyTranslation.write(dataPath + "keyWordTranslation.csv", keyWords, dataWriteCharset);
-            dataWrite_KeyPositionTranslation.write(dataPath + "keyWordTranslationPosition.csv", keyWordPositions, dataWriteCharset);
+            dataWrite_KeyTranslation.write(resultPath + "keyWordTranslation.csv", keyWords, dataWriteCharset);
+            dataWrite_KeyPositionTranslation.write(resultPath + "keyWordTranslationPosition.csv", keyWordPositions, dataWriteCharset);
         }
 
         logger.info("KeyWord count: " + keyWordCount);
