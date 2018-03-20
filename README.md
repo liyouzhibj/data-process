@@ -16,12 +16,12 @@
 java -jar data-process-1.0.0.jar  
 java -jar data-process-1.0.0.jar > log.file 2>&1 &     (后台运行)  
 ### 停止
-1.lsof -i|grep 8099
-2.kill -9 (1.中pid号)
+1.lsof -i|grep 8099  
+2.kill -9 (1.中pid号)  
 ### 使用详解
 1.默认端口8099，服务启动后，浏览器打开 http://localhost:8099/swagger-ui.html#/data-process-controller 查看接口。swagger使用指南请移步 https://swagger.io/ ；  
-2.浏览器打开 https://documenter.getpostman.com/view/3545239/collection/RVnTmLz4 查看接口示例报文；
-3.详细图文教程请移步 doc/Data-process.doc
+2.浏览器打开 https://documenter.getpostman.com/view/3545239/collection/RVnTmLz4 查看接口示例报文；  
+3.详细图文教程请移步 doc/Data-process.doc；  
 ## 下一版本功能预览
 1.单一大文件分割处理；  
 2.多文件集合分批处理；  
