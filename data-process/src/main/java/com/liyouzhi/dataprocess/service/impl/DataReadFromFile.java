@@ -146,8 +146,8 @@ public class DataReadFromFile implements DataRead<File, Integer, String, String,
 
 
     @Override
-    public Map<String,List<KeyWordTranslationPosition>> readLineToMap(File file) {
-        Map<String,List<KeyWordTranslationPosition>> keyList = new HashMap<>();
+    public Map<String, List<KeyWordTranslationPosition>> readLineToMap(File file) {
+        Map<String, List<KeyWordTranslationPosition>> keyList = new HashMap<>();
         BufferedReader reader = null;
         try {
             FileReader fileReader = new FileReader(file);
@@ -166,15 +166,14 @@ public class DataReadFromFile implements DataRead<File, Integer, String, String,
                 key.setEnd(Integer.parseInt(tempString[4]));
                 key.setKeyWord(tempString[5]);
                 key.setKeyWordTranslation(tempString[6]);
-              if( keyList.get(tempString[1]+"_"+tempString[2])!=null)
-              {
-                  keyList.get(tempString[1]+"_"+tempString[2]).add(key);
-              }else {
-                  List<KeyWordTranslationPosition> temp = new ArrayList<>();
-                  temp.add(key);
-                  keyList.put(tempString[1] + "_" + tempString[2], temp);
-              }
-              line++;
+                if (keyList.get(tempString[1] + "_" + tempString[2]) != null) {
+                    keyList.get(tempString[1] + "_" + tempString[2]).add(key);
+                } else {
+                    List<KeyWordTranslationPosition> temp = new ArrayList<>();
+                    temp.add(key);
+                    keyList.put(tempString[1] + "_" + tempString[2], temp);
+                }
+                line++;
             }
         } catch (IOException e) {
             logger.error(e.toString());

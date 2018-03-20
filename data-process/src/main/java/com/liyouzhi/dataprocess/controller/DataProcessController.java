@@ -197,22 +197,8 @@ public class DataProcessController {
 
 
     /**
-     * Abandon
+     * Replace key word from csv file
      * */
-//    @ApiOperation(value = "Replace key word from csv file")
-//    @RequestMapping(value = "/replaceKeyWordFromCSV", method = RequestMethod.POST)
-//    public String replaceKeyWordFromCSV(@RequestBody Map<String, Object> requestMap) {
-//        String fileName = requestMap.get("fileName").toString();
-//        List<KeyWordTranslationPosition> keyList = dataRead.readLienToObject(new File(fileName));
-//        for (KeyWordTranslationPosition key : keyList) {
-//            dataDelete.deleteKeyWordFromFile(key.getFile(), key.getLinenum(), key.getStart(), key.getEnd());
-//            long seek = (long) keySeekPosithon.keySeekPosition(new File(key.getFile()), key.getLinenum(), key.getStart());
-//            dataWrite_KeyTranslationWriteToFile.write(key.getFile(), seek, key.getKeyWordTranslation());
-//        }
-//        return "success";
-//    }
-
-
     @ApiOperation(value = "Replace key word from csv file")
     @RequestMapping(value = "/replaceKeyWordFromCSV", method = RequestMethod.POST)
     public String replaceKeyWordFromCSV(@RequestBody Map<String, Object> requestMap) throws Exception {
@@ -249,8 +235,18 @@ public class DataProcessController {
                     for (KeyWordTranslationPosition tempKey : key) {
                         raplaceContent = raplaceContent.replaceFirst(tempKey.getKeyWord(), " " + tempKey.getKeyWordTranslation() + " ");
                     }
-                    appendWriter(filePath + "/" + tempFileName + "bak" + fileType, raplaceContent + "\n");
+
+                    String fileBakName = filePath + "/" + tempFileName + fileType + ".bak";
+                    String content = raplaceContent + "\n";
+                    FileWriter writer = new FileWriter(fileBakName, true);
+                    writer.write(content);
+                    writer.close();
                 }
+
+                File tempFile = new File(file.getAbsolutePath() + ".bak");
+                file.delete();
+                tempFile.renameTo(file);
+
                 reader.close();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -267,18 +263,10 @@ public class DataProcessController {
     }
 
 
-    public static void appendWriter(String fileName, String content) {
-        try {
-            // 打开一个写文件器，构造函数中的第二个参数true表示以追加形式写文件
-            FileWriter writer = new FileWriter(fileName, true);
-            writer.write(content);
-            writer.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    @ApiOperation(value = "Replace key word from csv file")
+    /**
+     * Replace key word translation to file
+     * */
+    @ApiOperation(value = "Replace key word translation to file")
     @RequestMapping(value = "/translateFileToFile", method = RequestMethod.POST)
     public String translateFileToFile(@RequestBody Map<String, Object> requestMap) {
         String path = requestMap.get("path").toString();
