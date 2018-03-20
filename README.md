@@ -1,7 +1,7 @@
 # data-process
 数据处理
 ## 引言
-近期参与公司的一项翻译工作，需要将项目中涉及的汉字翻译成对应的英文。由于手动翻译效率低下，所以开发一个数据处理程序。
+近期参与公司的一项翻译工作，需要将项目中涉及的汉字翻译成对应的英文。由于手动翻译效率低下，所以开发一个数据处理程序。其中翻译模块使用有道翻译API接口。
 ## 版本功能预览
 ### 1.0.0
 1.检索指定路径下符合指定正则表达式的关键字，将关键字记录至 **.csv文件中；  
@@ -12,12 +12,18 @@
 ### 运行环境
 1.JRE1.8及以上
 ### 运行
-1.java -jar data-process-1.0.0.jar   
-2.java -jar data-process-1.0.0.jar > log.file 2>&1 &     (后台运行)
+1.下载 jar/data-process-1.0.0.jar 至本地，使用如下两种方式运行：  
+java -jar data-process-1.0.0.jar  
+java -jar data-process-1.0.0.jar > log.file 2>&1 &     (后台运行)  
 ### 停止
 1.lsof -i|grep 8099
 2.kill -9 (1.中pid号)
 ### 使用详解
-1.默认端口8099，服务启动后，浏览器打开 http://localhost:8099/swagger-ui.html#/data-process-controller 查看接口。swagger使用指南请移步 https://swagger.io/ ；
+1.默认端口8099，服务启动后，浏览器打开 http://localhost:8099/swagger-ui.html#/data-process-controller 查看接口。swagger使用指南请移步 https://swagger.io/ ；  
 2.浏览器打开 https://documenter.getpostman.com/view/3545239/collection/RVnTmLz4 查看接口示例报文；
+3.详细图文教程请移步 doc/Data-process.doc
+## 下一版本功能预览
+1.单一大文件分割处理；  
+2.多文件集合分批处理；  
+3.异常中断重试机制；  
 
