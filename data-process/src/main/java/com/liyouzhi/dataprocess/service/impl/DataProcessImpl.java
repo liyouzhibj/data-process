@@ -1,7 +1,7 @@
 package com.liyouzhi.dataprocess.service.impl;
 
-import com.liyouzhi.dataprocess.bo.KeyPosition;
-import com.liyouzhi.dataprocess.bo.NoteStatus;
+import com.liyouzhi.dataprocess.vo.KeyPosition;
+import com.liyouzhi.dataprocess.vo.NoteStatus;
 import com.liyouzhi.dataprocess.service.DataProcess;
 import com.liyouzhi.dataprocess.util.HttpRequest;
 import org.json.JSONObject;
