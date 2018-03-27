@@ -1,13 +1,12 @@
 package com.liyouzhi.dataprocess.controller;
 
-import com.liyouzhi.dataprocess.bo.KeyPosition;
+import com.liyouzhi.dataprocess.vo.*;
 import com.liyouzhi.dataprocess.domain.KeyWord;
 import com.liyouzhi.dataprocess.domain.KeyWordPosition;
 import com.liyouzhi.dataprocess.domain.KeyWordTranslation;
 import com.liyouzhi.dataprocess.domain.KeyWordTranslationPosition;
 import com.liyouzhi.dataprocess.service.*;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,13 +61,13 @@ public class DataProcessController {
     /**
      * Save key words to keyWord.csv and KeyWordPosition.csv
      */
-    @ApiOperation(value = "Save key word to csv file")
+    @ApiOperation(value = "保存关键词至CSV文件")
     @RequestMapping(value = "/saveKeyWordToCSV", method = RequestMethod.POST)
-    public String saveKeyWordToCSV(@RequestBody Map<String, Object> requestMap) {
-        String path = requestMap.get("dataPath").toString();
-        String resultPath = requestMap.get("resultPath").toString();
-        String regex = requestMap.get("regex").toString();
-        String fileType = requestMap.get("fileType").toString();
+    public String saveKeyWordToCSV(@RequestBody SKWTCSVRequest skwtcsvRequest) {
+        String path = skwtcsvRequest.getDataPath();
+        String resultPath = skwtcsvRequest.getResultPath();
+        String regex = skwtcsvRequest.getRegex();
+        String fileType = skwtcsvRequest.getFileType();
 
         File fileIsExist = new File(path);
         if(!fileIsExist.exists()){
@@ -132,15 +131,15 @@ public class DataProcessController {
     /**
      * Save key words to keyWordTranslation.csv and KeyWordTranslationPosition.csv
      */
-    @ApiOperation(value = "Save key word translation to csv file")
+    @ApiOperation(value = "保存关键词的翻译至CSV文件")
     @RequestMapping(value = "/saveKeyWordTranslationToCSV", method = RequestMethod.POST)
-    public String saveKeyWordTranslationToCSV(@RequestBody Map<String, Object> requestMap) {
-        String path = requestMap.get("dataPath").toString();
-        String resultPath = requestMap.get("resultPath").toString();
-        String regex = requestMap.get("regex").toString();
-        String fileType = requestMap.get("fileType").toString();
-        String sourceLang = requestMap.get("sourceLang").toString();
-        String targetLang = requestMap.get("targetLang").toString();
+    public String saveKeyWordTranslationToCSV(@RequestBody SKWTTCSVRequest skwttcsvRequest) {
+        String path = skwttcsvRequest.getDataPath();
+        String resultPath = skwttcsvRequest.getResultPath();
+        String regex = skwttcsvRequest.getRegex();
+        String fileType = skwttcsvRequest.getFileType();
+        String sourceLang = skwttcsvRequest.getSourceLang();
+        String targetLang = skwttcsvRequest.getTargetLang();
 
         File fileIsExist = new File(path);
         if(!fileIsExist.exists()){
@@ -198,10 +197,10 @@ public class DataProcessController {
     /**
      * Replace key word from csv file
      * */
-    @ApiOperation(value = "Replace key word from csv file")
+    @ApiOperation(value = "依据CSV文件替换原文件关键词所对应的翻译")
     @RequestMapping(value = "/replaceKeyWordFromCSV", method = RequestMethod.POST)
-    public String replaceKeyWordFromCSV(@RequestBody Map<String, Object> requestMap) throws Exception {
-        String fileName = requestMap.get("fileName").toString();
+    public String replaceKeyWordFromCSV(@RequestBody RKWFCSVRequest rkwfcsvRequest) throws Exception {
+        String fileName = rkwfcsvRequest.getFileName();
 
         File fileIsExist = new File(fileName);
         if(!fileIsExist.exists()){
@@ -265,14 +264,14 @@ public class DataProcessController {
     /**
      * Replace key word translation to file
      * */
-    @ApiOperation(value = "Replace key word translation to file")
+    @ApiOperation(value = "直接替换原文件关键词所对应的翻译")
     @RequestMapping(value = "/translateFileToFile", method = RequestMethod.POST)
-    public String translateFileToFile(@RequestBody Map<String, Object> requestMap) {
-        String path = requestMap.get("path").toString();
-        String regex = requestMap.get("regex").toString();
-        String fileType = requestMap.get("fileType").toString();
-        String sourceLang = requestMap.get("sourceLang").toString();
-        String targetLang = requestMap.get("targetLang").toString();
+    public String translateFileToFile(@RequestBody TFTFRequest tftfRequest) {
+        String path = tftfRequest.getDataPath();
+        String regex = tftfRequest.getRegex();
+        String fileType = tftfRequest.getFileType();
+        String sourceLang = tftfRequest.getSourceLang();
+        String targetLang = tftfRequest.getTargetLang();
 
         List<File> fileFilterBefore = dataRead.fileRecognition(path);
         List<File> files = dataRead.fileFilter(fileFilterBefore, fileType);

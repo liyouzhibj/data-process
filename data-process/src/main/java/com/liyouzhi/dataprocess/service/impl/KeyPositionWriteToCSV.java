@@ -1,7 +1,5 @@
 package com.liyouzhi.dataprocess.service.impl;
 
-import com.liyouzhi.dataprocess.bo.KeyPosition;
-import com.liyouzhi.dataprocess.domain.KeyWord;
 import com.liyouzhi.dataprocess.domain.KeyWordPosition;
 import com.liyouzhi.dataprocess.service.DataWrite;
 import com.opencsv.CSVWriter;

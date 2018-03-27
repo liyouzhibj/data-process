@@ -1,4 +1,4 @@
-package com.liyouzhi.dataprocess.bo;
+package com.liyouzhi.dataprocess.vo;
 
 public class KeyPosition {
     private int start;
