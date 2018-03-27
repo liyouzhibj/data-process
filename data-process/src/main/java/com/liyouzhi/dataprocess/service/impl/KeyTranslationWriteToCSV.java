@@ -19,11 +19,22 @@ public class KeyTranslationWriteToCSV implements DataWrite<String, List<KeyWordT
     public void write(String csvName, List<KeyWordTranslation> keyList, String charset) {
         BufferedWriter fileWriter = null;
         try {
-            File file = new File(csvName.substring(0,csvName.lastIndexOf("/")));
-            if(!file.exists())
-            {
+            int index = csvName.lastIndexOf("/");
+            int index2 = csvName.lastIndexOf("\\");
+            if (index == -1 && index2 == -1) {
+                throw new RuntimeException("file path err!");
+            }
+            File file = null;
+            if (index != -1) {
+                file = new File(csvName.substring(0, csvName.lastIndexOf("/")));
+            }
+            if (index2 != -1) {
+                file = new File(csvName.substring(0, csvName.lastIndexOf("\\")));
+            }
+            if (!file.exists()) {
                 file.mkdirs();
             }
+
             OutputStreamWriter w = new OutputStreamWriter(new FileOutputStream(csvName), charset);
             fileWriter = new BufferedWriter(w);
             CSVWriter csvWriter = new CSVWriter(fileWriter, ',');
