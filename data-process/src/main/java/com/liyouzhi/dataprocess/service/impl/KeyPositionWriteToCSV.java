@@ -18,7 +18,7 @@ public class KeyPositionWriteToCSV implements DataWrite<String, List<KeyWordPosi
     public void write(String csvName, List<KeyWordPosition> keyWordPositionsList, String charset) {
         BufferedWriter fileWriter = null;
         try {
-            OutputStreamWriter w = new OutputStreamWriter(new FileOutputStream(csvName), "utf-8");
+            OutputStreamWriter w = new OutputStreamWriter(new FileOutputStream(csvName), charset);
             fileWriter = new BufferedWriter(w);
             CSVWriter csvWriter = new CSVWriter(fileWriter, ',');
 

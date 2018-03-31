@@ -1,5 +1,6 @@
 package com.liyouzhi.dataprocess.controller;
 
+import com.liyouzhi.dataprocess.service.impl.FileCharsetImpl;
 import com.liyouzhi.dataprocess.vo.*;
 import com.liyouzhi.dataprocess.domain.KeyWord;
 import com.liyouzhi.dataprocess.domain.KeyWordPosition;
@@ -7,6 +8,7 @@ import com.liyouzhi.dataprocess.domain.KeyWordTranslation;
 import com.liyouzhi.dataprocess.domain.KeyWordTranslationPosition;
 import com.liyouzhi.dataprocess.service.*;
 import io.swagger.annotations.*;
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,6 +60,9 @@ public class DataProcessController {
     @Value("${data.write.charset}")
     private String dataWriteCharset;
 
+    @Value("${data.write.charset}")
+    private String dataReadCharset;
+
     /**
      * Save key words to keyWord.csv and KeyWordPosition.csv
      */
@@ -68,9 +73,10 @@ public class DataProcessController {
         String resultPath = skwtcsvRequest.getResultPath();
         String regex = skwtcsvRequest.getRegex();
         String fileType = skwtcsvRequest.getFileType();
+        String sourceFileCharset = skwtcsvRequest.getSourceFileCharset();
 
         File fileIsExist = new File(path);
-        if(!fileIsExist.exists()){
+        if (!fileIsExist.exists()) {
             return "Path is not exist!";
         }
 
@@ -82,7 +88,7 @@ public class DataProcessController {
         int keyWordPositionCount = 0;
 
         for (File file : files) {
-            Map<Integer, String> lineData = dataRead.readLine(file);
+            Map<Integer, String> lineData = dataRead.readLine(file, sourceFileCharset);
             for (Entry<Integer, String> entry : lineData.entrySet()) {
                 String filterAfter = (String) dataProcess.annotationFilter(entry.getValue());
                 List<KeyPosition> keys = dataProcess.getKey(filterAfter, regex);
@@ -138,11 +144,12 @@ public class DataProcessController {
         String resultPath = skwttcsvRequest.getResultPath();
         String regex = skwttcsvRequest.getRegex();
         String fileType = skwttcsvRequest.getFileType();
+        String sourceFileCharset = skwttcsvRequest.getSourceFileCharset();
         String sourceLang = skwttcsvRequest.getSourceLang();
         String targetLang = skwttcsvRequest.getTargetLang();
 
         File fileIsExist = new File(path);
-        if(!fileIsExist.exists()){
+        if (!fileIsExist.exists()) {
             return "Path is not exist!";
         }
 
@@ -155,7 +162,7 @@ public class DataProcessController {
         int keyWordPositionCount = 0;
 
         for (File file : files) {
-            Map<Integer, String> lineData = dataRead.readLine(file);
+            Map<Integer, String> lineData = dataRead.readLine(file, sourceFileCharset);
             for (Entry<Integer, String> entry : lineData.entrySet()) {
                 String filterAfter = (String) dataProcess.annotationFilter(entry.getValue());
                 List<KeyPosition> keys = dataProcess.getKey(filterAfter, regex);
@@ -196,66 +203,42 @@ public class DataProcessController {
 
     /**
      * Replace key word from csv file
-     * */
+     */
     @ApiOperation(value = "依据CSV文件替换原文件关键词所对应的翻译")
     @RequestMapping(value = "/replaceKeyWordFromCSV", method = RequestMethod.POST)
     public String replaceKeyWordFromCSV(@RequestBody RKWFCSVRequest rkwfcsvRequest) throws Exception {
         String fileName = rkwfcsvRequest.getFileName();
+        String sourceFileCharset = rkwfcsvRequest.getSourceFileCharset();
 
         File fileIsExist = new File(fileName);
-        if(!fileIsExist.exists()){
+        if (!fileIsExist.exists()) {
             return "Path is not exist!";
         }
 
-        Map<String, List<KeyWordTranslationPosition>> keyList = dataRead.readLineToMap(new File(fileName));
-        List<String> list = new ArrayList<>();
+        Map<String, List<KeyWordTranslationPosition>> keyList = dataRead.readLineToMap(fileIsExist, dataReadCharset);
         for (Entry<String, List<KeyWordTranslationPosition>> temp : keyList.entrySet()) {
-            if (list.contains(temp.getKey().split("_")[0])) {
-                continue;
+            List<String> lines;
+            if (sourceFileCharset == null || sourceFileCharset.equals("")) {
+                FileCharset fileCharset = new FileCharsetImpl();
+                sourceFileCharset = (String) fileCharset.getFileCharset(new File(temp.getKey()));
             }
-            list.add(temp.getKey().split("_")[0]);
-            File file = new File(temp.getKey().split("_")[0]);
-            BufferedReader reader = null;
-            try {
-                reader = new BufferedReader(new FileReader(file));
-                String tempString = null;
-                int line = 1;
-                while ((tempString = reader.readLine()) != null) {
-                    List<KeyWordTranslationPosition> key = keyList.get(temp.getKey().split("_")[0] + "_" + line);
-                    line++;
-                    if (key == null || key.isEmpty()) {
-                        continue;
-                    }
-                    String filePath = temp.getKey().split("_")[0].substring(0, temp.getKey().split("_")[0].lastIndexOf("/"));
-                    String tempFileName = temp.getKey().split("_")[0].substring(temp.getKey().split("_")[0].lastIndexOf("/"), temp.getKey().split("_")[0].lastIndexOf("."));
-                    String fileType = temp.getKey().split("_")[0].substring(temp.getKey().split("_")[0].lastIndexOf("."), temp.getKey().split("_")[0].length());
-                    String raplaceContent = tempString;
-                    for (KeyWordTranslationPosition tempKey : key) {
-                        raplaceContent = raplaceContent.replaceFirst(tempKey.getKeyWord(), " " + tempKey.getKeyWordTranslation() + " ");
-                    }
 
-                    String fileBakName = filePath + "/" + tempFileName + fileType + ".bak";
-                    String content = raplaceContent + "\n";
-                    FileWriter writer = new FileWriter(fileBakName, true);
-                    writer.write(content);
-                    writer.close();
-                }
-
-                File tempFile = new File(file.getAbsolutePath() + ".bak");
-                file.delete();
-                tempFile.renameTo(file);
-
-                reader.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                if (reader != null) {
-                    try {
-                        reader.close();
-                    } catch (IOException e1) {
-                    }
-                }
+            lines = FileUtils.readLines(new File(temp.getKey()), sourceFileCharset);
+            for(KeyWordTranslationPosition tempKey : temp.getValue()){
+                int lineNum = tempKey.getLinenum() - 1 ;
+                logger.info("sourceString: " + lines.get(lineNum));
+                String changeKeyToTrans = lines.get(lineNum).
+                        replaceFirst(tempKey.getKeyWord(), tempKey.getKeyWordTranslation());
+                lines.set(lineNum, changeKeyToTrans);
+                logger.info("targetString: " + changeKeyToTrans);
             }
+
+
+            File fileBak = new File(temp.getKey() + ".bak");
+            File sourceFile = new File(temp.getKey());
+            FileUtils.writeLines(fileBak, sourceFileCharset, lines, true);
+            FileUtils.forceDelete(sourceFile);
+            FileUtils.moveFile(fileBak, sourceFile);
         }
         return "success";
     }
@@ -263,7 +246,7 @@ public class DataProcessController {
 
     /**
      * Replace key word translation to file
-     * */
+     */
     @ApiOperation(value = "直接替换原文件关键词所对应的翻译")
     @RequestMapping(value = "/translateFileToFile", method = RequestMethod.POST)
     public String translateFileToFile(@RequestBody TFTFRequest tftfRequest) {
@@ -272,15 +255,24 @@ public class DataProcessController {
         String fileType = tftfRequest.getFileType();
         String sourceLang = tftfRequest.getSourceLang();
         String targetLang = tftfRequest.getTargetLang();
+        String sourceFileCharset = tftfRequest.getSourceFileCharset();
+
+        File fileIsExist = new File(path);
+        if (!fileIsExist.exists()) {
+            return "Path is not exist!";
+        }
 
         List<File> fileFilterBefore = dataRead.fileRecognition(path);
         List<File> files = dataRead.fileFilter(fileFilterBefore, fileType);
         try {
             for (File file : files) {
-
-                BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
-                String temp = null;
-                BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file.getAbsolutePath() + ".bak")));
+                if(sourceFileCharset == null || sourceFileCharset.equals("")){
+                    FileCharset fileCharset = new FileCharsetImpl();
+                    sourceFileCharset = (String)fileCharset.getFileCharset(file);
+                }
+                BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file), sourceFileCharset));
+                String temp;
+                BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file.getAbsolutePath() + ".bak"), sourceFileCharset));
                 while ((temp = br.readLine()) != null) {
                     String wirteStr = temp;
                     String filterAfter = (String) dataProcess.annotationFilter(temp);
