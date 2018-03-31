@@ -13,9 +13,11 @@ public class SKWTTCSVRequest {
     private String regex;
     @ApiModelProperty(value = "文件类型", example = "java", notes = "传空时，检索待处理数据路径下所有文件", position = 4)
     private String fileType;
-    @ApiModelProperty(value = "原语言", example = "zh-CHS", position = 5)
+    @ApiModelProperty(value = "原文件字符类型", example = "UTF-8", notes = "传空时，使用探测器类自动探测文件类型", position = 5)
+    private String sourceFileCharset;
+    @ApiModelProperty(value = "原语言", example = "zh-CHS", position = 6)
     private String sourceLang;
-    @ApiModelProperty(value = "翻译语言", example = "EN", position = 6)
+    @ApiModelProperty(value = "翻译语言", example = "EN", position = 7)
     private String targetLang;
 
     public String getDataPath() {
@@ -48,6 +50,14 @@ public class SKWTTCSVRequest {
 
     public void setFileType(String fileType) {
         this.fileType = fileType;
+    }
+
+    public String getSourceFileCharset() {
+        return sourceFileCharset;
+    }
+
+    public void setSourceFileCharset(String sourceFileCharset) {
+        this.sourceFileCharset = sourceFileCharset;
     }
 
     public String getSourceLang() {

@@ -2,7 +2,9 @@ package com.liyouzhi.dataprocess.service.impl;
 
 import com.liyouzhi.dataprocess.domain.KeyWordTranslationPosition;
 import com.liyouzhi.dataprocess.service.DataRead;
+import com.liyouzhi.dataprocess.service.FileCharset;
 import com.opencsv.CSVReader;
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -23,28 +25,25 @@ public class DataReadFromFile implements DataRead<File, Integer, String, String,
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Override
-    public Map<Integer, String> readLine(File file) {
-        BufferedReader reader = null;
+    public Map<Integer, String> readLine(File file, String charset) {
+        int lineNo = 1;
         Map<Integer, String> map = new LinkedHashMap<>();
         try {
-            FileReader fileReader = new FileReader(file);
-            reader = new BufferedReader(fileReader);
-            String tempString = null;
-            int line = 1;
-
-            while ((tempString = reader.readLine()) != null) {
-                map.put(line, tempString);
-                logger.info("line no " + line + " : " + tempString);
-                line++;
+            List<String> lines;
+            if (charset == null || charset.equals("")) {
+                FileCharset fileCharset = new FileCharsetImpl();
+                charset = (String) fileCharset.getFileCharset(file);
             }
+
+            lines = FileUtils.readLines(file, charset);
+            for (String line : lines) {
+                map.put(lineNo++, line);
+                logger.info("line no " + (lineNo - 1) + " : " + line);
+            }
+
         } catch (IOException e) {
             logger.error(e.toString());
-        } finally {
-            try {
-                reader.close();
-            } catch (IOException e) {
-                logger.error(e.toString());
-            }
+            throw new RuntimeException(e);
         }
 
         return map;
@@ -99,7 +98,6 @@ public class DataReadFromFile implements DataRead<File, Integer, String, String,
         for (File file : fileList) {
             String fileName = file.getName();
             String type = fileName.substring(fileName.lastIndexOf(".") + 1);
-            System.out.println(type);
             if (fileType.equals(type)) {
                 result.add(file);
             }
@@ -146,14 +144,14 @@ public class DataReadFromFile implements DataRead<File, Integer, String, String,
 
 
     @Override
-    public Map<String, List<KeyWordTranslationPosition>> readLineToMap(File file) {
+    public Map<String, List<KeyWordTranslationPosition>> readLineToMap(File file, String charset) {
         Map<String, List<KeyWordTranslationPosition>> keyList = new HashMap<>();
         BufferedReader reader = null;
         try {
-            FileReader fileReader = new FileReader(file);
-            reader = new BufferedReader(fileReader);
+            InputStreamReader in = new InputStreamReader(new FileInputStream(file), charset);
+            reader = new BufferedReader(in);
             CSVReader csvReader = new CSVReader(reader);
-            String[] tempString = null;
+            String[] tempString;
             int line = 2;
             csvReader.readNext();  //Begin linenum 2
 
@@ -166,12 +164,12 @@ public class DataReadFromFile implements DataRead<File, Integer, String, String,
                 key.setEnd(Integer.parseInt(tempString[4]));
                 key.setKeyWord(tempString[5]);
                 key.setKeyWordTranslation(tempString[6]);
-                if (keyList.get(tempString[1] + "_" + tempString[2]) != null) {
-                    keyList.get(tempString[1] + "_" + tempString[2]).add(key);
+                if (keyList.get(tempString[1]) != null) {
+                    keyList.get(tempString[1]).add(key);
                 } else {
                     List<KeyWordTranslationPosition> temp = new ArrayList<>();
                     temp.add(key);
-                    keyList.put(tempString[1] + "_" + tempString[2], temp);
+                    keyList.put(tempString[1], temp);
                 }
                 line++;
             }

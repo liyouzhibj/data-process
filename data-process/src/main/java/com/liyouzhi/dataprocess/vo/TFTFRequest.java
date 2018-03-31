@@ -15,6 +15,8 @@ public class TFTFRequest {
     private String sourceLang;
     @ApiModelProperty(value = "翻译语言", example = "EN", position = 5)
     private String targetLang;
+    @ApiModelProperty(value = "原文件字符类型", example = "UTF-8", notes = "传空时，使用探测器类自动探测文件类型", position = 6)
+    private String sourceFileCharset;
 
     public String getDataPath() {
         return dataPath;
@@ -54,5 +56,13 @@ public class TFTFRequest {
 
     public void setTargetLang(String targetLang) {
         this.targetLang = targetLang;
+    }
+
+    public String getSourceFileCharset() {
+        return sourceFileCharset;
+    }
+
+    public void setSourceFileCharset(String sourceFileCharset) {
+        this.sourceFileCharset = sourceFileCharset;
     }
 }

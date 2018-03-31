@@ -8,9 +8,9 @@ import java.util.Map;
 
 public interface DataRead<T, K, V, S, O> {
     /**
-    * Read a Line from t, return line number for type K and line value for type V
+    * Read a Line from t for charset s, return line number for type K and line value for type V
     * */
-    Map<K, V> readLine(T t);
+    Map<K, V> readLine(T t, S s);
 
 
     /**
@@ -32,5 +32,5 @@ public interface DataRead<T, K, V, S, O> {
     /**
      * Read a line from file t to map
      * */
-    Map<String,List<KeyWordTranslationPosition>>  readLineToMap(T t);
+    Map<String,List<KeyWordTranslationPosition>>  readLineToMap(T t, S s);
 }

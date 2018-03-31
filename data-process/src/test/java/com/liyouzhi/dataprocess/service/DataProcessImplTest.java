@@ -27,7 +27,7 @@ public class DataProcessImplTest {
         List<File> fileList =  dataRead.fileRecognition(path);
 
         for(File file : fileList){
-            Map<Integer, String> map = dataRead.readLine(file);
+            Map<Integer, String> map = dataRead.readLine(file, "");
             for(Map.Entry entry : map.entrySet()){
                 System.out.println("value: " + entry.getValue());
                 String filter = (String)dataProcess.annotationFilter(entry.getValue());
