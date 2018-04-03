@@ -126,6 +126,11 @@ public class DataProcessController {
         }
 
         if (keyWordCount != 0) {
+            try {
+                FileUtils.forceMkdir(new File(resultPath));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             dataWrite_Key.write(resultPath + "keyWord.csv", keyWords, dataWriteCharset);
             dataWrite_KeyPosition.write(resultPath + "keyWordPosition.csv", keyWordPositions, dataWriteCharset);
         }
@@ -188,10 +193,17 @@ public class DataProcessController {
                 }
             }
         }
+
         for (KeyWordTranslation temp : KeyCountUtil.values()) {
             keyWords.add(temp);
         }
+
         if (keyWordCount != 0) {
+            try {
+                FileUtils.forceMkdir(new File(resultPath));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             dataWrite_KeyTranslation.write(resultPath + "keyWordTranslation.csv", keyWords, dataWriteCharset);
             dataWrite_KeyPositionTranslation.write(resultPath + "keyWordTranslationPosition.csv", keyWordPositions, dataWriteCharset);
         }
