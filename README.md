@@ -23,7 +23,7 @@
 ### 运行环境
 1.JRE1.8及以上
 ### 运行
-1.下载代码至本地，切换目录至 ../data-process/data-process/ ,执行 mvn package -Dmaven.test.skip=true ;  
+1.下载代码至本地，切换目录至 ../data-process/data-process/ ,执行 mvn package ;  
 2.切换至 ../data-process/data-process/target/ ,使用如下两种方式运行：  
 java -jar data-process-1.0.1.jar  
 java -jar data-process-1.0.1.jar > log.file 2>&1 &     (后台运行)  
